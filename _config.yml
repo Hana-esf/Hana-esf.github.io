@@ -1,0 +1,27 @@
+title: Hana Esfandiar
+description: Résumé, CV & occasional thoughts.
+url: "https://Hana-esf.github.io"
+repository: Hana-esf/Hana-esf.github.io
+
+remote_theme: "mmistakes/minimal-mistakes"
+minimal_mistakes_skin: "dark"   # built-in dark mode
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-include-cache
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: single
