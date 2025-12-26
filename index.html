@@ -3,44 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoJa Ardestani | Home</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>MoJa Ardestani - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- 1. COLOR PALETTE & VARIABLES --- */
+        :root {
+            --bg-dark: #0c0c16;        /* Deep Black/Blue Background */
+            --text-main: #b8baff;      /* Light Periwinkle Text */
+            --text-highlight: #b9f0d7; /* Mint Green Highlights */
+            --accent-indigo: #6666ff;  /* Bright Indigo */
+            --accent-purple: #c938ff;  /* Vivid Purple */
+            
+            /* Glass Effect Config */
+            --glass-bg: rgba(20, 20, 30, 0.6);
+            --glass-border: rgba(185, 240, 215, 0.1); 
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- 2. GLOBAL STYLES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* Dynamic Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- 3. NAVIGATION (Sticky Glass) --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(12, 12, 22, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--text-highlight), var(--accent-indigo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--text-main); }
+        .nav-links a:hover { color: var(--accent-purple); text-shadow: 0 0 8px rgba(201, 56, 255, 0.4); }
+
+        /* --- 4. SECTIONS & TITLES --- */
+        section { padding: 100px 0; min-height: 80vh; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--text-highlight);
+            position: relative;
+        }
+        .section-title::after {
+            content: ''; display: block; width: 60px; height: 4px; 
+            background: var(--accent-indigo); margin: 10px auto 0; border-radius: 2px;
+        }
+
+        /* --- 5. GLASS CARD COMPONENT --- */
+        .glass-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--glass-shadow);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+        .glass-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(102, 102, 255, 0.15);
+            border-color: var(--accent-indigo);
+        }
+
+        /* --- 6. HERO SECTION (Profile Image) --- */
+        #home {
+            display: flex;
+            align-items: center;
+            padding-top: 120px; /* Offset for fixed header */
+        }
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+            flex-wrap: wrap-reverse;
+            width: 100%;
+        }
+        .hero-text { flex: 1; }
+        .hero-text h1 { font-size: 3.5rem; color: var(--text-highlight); line-height: 1.1; margin-bottom: 15px; }
+        .hero-text h2 { font-size: 1.8rem; color: var(--accent-purple); margin-bottom: 25px; }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-indigo), var(--accent-purple));
+            color: white; box-shadow: 0 4px 15px rgba(102, 102, 255, 0.4);
+        }
+        .btn-primary:hover { transform: scale(1.05); }
+        .btn-outline {
+            border: 2px solid var(--accent-indigo); color: var(--text-highlight); margin-left: 15px;
+        }
+        .btn-outline:hover { background: rgba(102, 102, 255, 0.1); }
+
+        /* PROFILE IMAGE PLACEHOLDER */
+        .profile-wrapper {
+            position: relative;
+            width: 320px; height: 320px;
+            border-radius: 50%;
+            padding: 10px;
+            background: linear-gradient(45deg, var(--accent-indigo), var(--accent-purple));
+            box-shadow: 0 0 30px rgba(102, 102, 255, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+        .profile-img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #1a1a2e; /* Fallback color */
+            border: 5px solid var(--bg-dark);
+        }
+
+        /* --- 7. TABS & TIMELINE (Experience) --- */
+        .tab-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        .tab-btn {
+            background: transparent; border: none; font-size: 1.1rem; color: var(--text-main);
+            padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active { color: var(--text-highlight); border-bottom-color: var(--accent-purple); }
+        
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+
+        .timeline { position: relative; padding-left: 30px; border-left: 2px solid rgba(255,255,255,0.1); margin-left: 10px; }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-dot {
+            position: absolute; left: -36px; top: 0; width: 14px; height: 14px;
+            background: var(--accent-indigo); border-radius: 50%; box-shadow: 0 0 10px var(--accent-indigo);
+        }
+
+        /* --- 8. PROJECTS & BLOG GRIDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        
+        .card-img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; opacity: 0.8; transition: 0.3s; }
+        .glass-box:hover .card-img { opacity: 1; transform: scale(1.02); }
+
+        .tags span {
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 12px;
+            background: rgba(102, 102, 255, 0.2); color: var(--text-highlight);
+            margin-right: 5px; border: 1px solid rgba(102, 102, 255, 0.3);
+        }
+
+        /* --- 9. SKILLS --- */
+        .skill-group h3 { color: var(--accent-purple); margin-bottom: 10px; border-left: 3px solid var(--accent-indigo); padding-left: 10px; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+        .skill-tag { 
+            background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 5px; 
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.2s;
+        }
+        .skill-tag:hover { background: var(--accent-indigo); color: white; border-color: var(--accent-indigo); }
+
+        /* --- 10. ANIMATIONS --- */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-content { text-align: center; justify-content: center; }
+            .profile-wrapper { width: 250px; height: 250px; margin: 0 auto; }
+        }
+    </style>
 </head>
 <body>
+
+    <canvas id="bg-canvas"></canvas>
+
     <header>
         <div class="container">
             <nav>
                 <div class="logo">MoJa.</div>
                 <div class="nav-links">
-                    <a href="index.html">Home</a>
-                    <a href="about.html">About</a>
-                    <a href="education.html">Education</a>
-                    <a href="experience.html">Experience</a>
-                    <a href="projects.html">Projects</a>
-                    <a href="blog.html">Blog</a>
-                    <a href="contact.html">Contact</a>
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#education">Education</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#blog">Blog</a>
+                    <a href="#contact">Contact</a>
                 </div>
             </nav>
         </div>
     </header>
 
-    <div class="container" style="flex: 1; display: flex; align-items: center; justify-content: center;">
-        <div style="text-align: center; max-width: 800px;">
-            <div class="glass-box">
-                <h1 style="font-size: 3.5rem;">MoJa Ardestani</h1>
-                <h2 style="color: var(--accent-secondary);">Applied ML Researcher</h2>
-                <p style="margin: 20px 0; font-size: 1.2rem;">
+    <section id="home">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1>MoJa Ardestani</h1>
+                <h2>Applied ML Researcher</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 30px;">
                     Bridging Deep Learning research and real-world impact. <br>
                     Specialized in RAG, Agentic Systems, and NLP.
                 </p>
-                <div style="margin-top: 30px;">
-                    <a href="assets/cv.pdf" download class="btn btn-primary">Download CV</a>
-                    <a href="contact.html" class="btn" style="border: 1px solid var(--accent-primary); color: var(--text-main); margin-left: 10px;">Get in Touch</a>
+                <a href="assets/cv.pdf" class="btn btn-primary" download>Download CV</a>
+                <a href="#contact" class="btn btn-outline">Get In Touch</a>
+            </div>
+            
+            <div class="profile-wrapper">
+                <img src="https://via.placeholder.com/350x350/0c0c16/b9f0d7?text=Upload+Your+Photo" alt="MoJa Ardestani" class="profile-img">
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="glass-box" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    I am an AI researcher and applied scientist working at the intersection of Deep Learning, Natural Language Processing (NLP), and Large Language Models (LLMs). My work bridges academic research and real-world applications, covering structured and unstructured data. Currently completing my Master of Science in Computing Science at the University of Alberta, I focus on evaluation frameworks for LLM outputs and system design for Retrieval-Augmented Generation (RAG).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <div class="container">
+            <h2 class="section-title">Education</h2>
+            <div style="display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto;">
+                <div class="glass-box">
+                    <h3 style="color:var(--text-highlight)">University of Alberta</h3>
+                    <h4 style="color:var(--accent-indigo)">M.Sc. in Computing Science</h4>
+                    <p class="text-muted">Edmonton, Canada | Expected Sept 2025</p>
+                    <p style="margin-top:10px;">GPA: 4.0 / 4.0 • Thesis: "LongRecall: A Structured Evaluation Pipeline for Recall in Generative QA"</p>
+                </div>
+                <div class="glass-box">
+                    <h3 style="color:var(--text-highlight)">Amirkabir University of Technology</h3>
+                    <h4 style="color:var(--accent-indigo)">B.Sc. in Computer Engineering</h4>
+                    <p class="text-muted">Tehran, Iran | 2018 - 2022</p>
+                    <p style="margin-top:10px;">GPA: 3.95 / 4.0 • Major: Artificial Intelligence</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="assets/js/script.js"></script>
+    <section id="experience">
+        <div class="container">
+            <h2 class="section-title">Experience</h2>
+            
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="openTab(event, 'professional')">Professional</button>
+                <button class="tab-btn" onclick="openTab(event, 'research')">Research</button>
+                <button class="tab-btn" onclick="openTab(event, 'teaching')">Teaching</button>
+            </div>
+
+            <div id="professional" class="tab-content active">
+                <div class="timeline" style="max-width: 800px; margin: 0 auto;">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="glass-box">
+                            <h3>AI Research Planning (AIRPI)</h3>
+                            <span style="color:var(--accent-purple)">Amii | July 2025 - Present</span>
+                            <p style="margin-top:10px">Designing searchable knowledge bases for RAG systems aligned with business needs.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="glass-box">
+                            <h3>Client Coaching</h3>
+                            <span style="color:var(--accent-purple)">Amii | Dec 2024 - May 2025</span>
+                            <p style="margin-top:10px">Coached healthcare startups on chatbot design and safe LLM deployment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="research" class="tab-content">
+                <div class="timeline" style="max-width: 800px; margin: 0 auto;">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="glass-box">
+                            <h3>Research Assistant</h3>
+                            <span style="color:var(--accent-purple)">UAlberta | Feb 2024 - Present</span>
+                            <p style="margin-top:10px">Developed "LongRecall" pipeline achieving +40% F1 improvement.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="teaching" class="tab-content">
+                 <div class="timeline" style="max-width: 800px; margin: 0 auto;">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="glass-box">
+                            <h3>Teaching Assistant</h3>
+                            <span style="color:var(--accent-purple)">UAlberta | 2023 - 2025</span>
+                            <p style="margin-top:10px">Mentored students in Computing Science courses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title">Notable Projects</h2>
+            <div class="grid">
+                
+                <div class="glass-box">
+                    <img src="https://via.placeholder.com/400x200/2a2a3e/b9f0d7?text=KG+Project" alt="Project" class="card-img">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>Triple Extraction</h3>
+                        <a href="https://github.com/MohammadJavadArdestani" target="_blank" title="View Code">
+                            <i class="fab fa-github" style="font-size:1.5rem; color: white;"></i>
+                        </a>
+                    </div>
+                    <p style="margin:10px 0; font-size:0.9rem;">Enhanced LLMs for knowledge graph construction via prompt-based alignment.</p>
+                    <div class="tags">
+                        <span>LLM</span> <span>Neo4j</span> <span>Python</span>
+                    </div>
+                </div>
+
+                <div class="glass-box">
+                    <img src="https://via.placeholder.com/400x200/2a2a3e/b9f0d7?text=SQL+Gen" alt="Project" class="card-img">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>SQL Explanation</h3>
+                        <a href="https://github.com/MohammadJavadArdestani" target="_blank">
+                            <i class="fab fa-github" style="font-size:1.5rem; color: white;"></i>
+                        </a>
+                    </div>
+                    <p style="margin:10px 0; font-size:0.9rem;">Generating natural language explanations for SQL queries using Spider datasets.</p>
+                    <div class="tags">
+                        <span>NLP</span> <span>SQL</span> <span>PyTorch</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="container">
+            <h2 class="section-title">Skills</h2>
+            <div class="glass-box">
+                <div class="grid">
+                    <div class="skill-group">
+                        <h3>Core Expertise</h3>
+                        <div class="skill-tags">
+                            <div class="skill-tag">LLM Evaluation</div>
+                            <div class="skill-tag">RAG Systems</div>
+                            <div class="skill-tag">Agentic AI</div>
+                            <div class="skill-tag">ML Design</div>
+                        </div>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Tech Stack</h3>
+                        <div class="skill-tags">
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">PyTorch</div>
+                            <div class="skill-tag">Docker</div>
+                            <div class="skill-tag">AWS</div>
+                            <div class="skill-tag">LangChain</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog">
+        <div class="container">
+            <h2 class="section-title">Blog</h2>
+            <div class="grid">
+                <div class="glass-box">
+                    <img src="https://via.placeholder.com/400x200/6666ff/ffffff?text=RAG+Systems+Banner" alt="Blog" class="card-img">
+                    <h3 style="color:var(--text-highlight)">Optimizing RAG Systems</h3>
+                    <p style="font-size:0.9rem; margin:10px 0;">A deep dive into improving retrieval accuracy for enterprise apps.</p>
+                    <div style="display:flex; align-items:center; gap:10px; margin-top:15px;">
+                        <div style="width:20px; height:20px; background:#FF6719; border-radius:3px;"></div>
+                        <a href="#" style="color:var(--accent-indigo); font-weight:bold;">Read on Substack &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container" style="text-align: center;">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="glass-box" style="display:inline-block; text-align:center;">
+                <p style="margin-bottom:20px;">Open for collaborations and research opportunities.</p>
+                <div style="font-size:2rem; display:flex; gap:30px; justify-content:center;">
+                    <a href="mailto:email@example.com"><i class="fas fa-envelope"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/MohammadJavadArdestani"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 30px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted);">
+        <p>&copy; 2024 MoJa Ardestani. Built with Glassmorphism.</p>
+    </footer>
+
+    <script>
+        // --- Tab Logic ---
+        function openTab(evt, tabName) {
+            var i, tabContent, tabBtn;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+                tabContent[i].classList.remove("active");
+            }
+            tabBtn = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabBtn.length; i++) {
+                tabBtn[i].className = tabBtn[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // --- Dynamic Canvas Logic ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                // Randomly assign colors from your palette
+                this.color = Math.random() > 0.5 ? 'rgba(102, 102, 255, 0.5)' : 'rgba(201, 56, 255, 0.5)';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                // Draw Connections
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(184, 186, 255, ${0.1 - dist/1200})`; // Faint connection
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
