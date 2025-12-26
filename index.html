@@ -54,23 +54,22 @@
             transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
         }
 
-        /* CRITICAL for Canvas Visibility: Apply background to HTML, transparent BODY */
+        /* CRITICAL for Canvas Visibility */
         html {
             background-color: var(--bg-color);
             scroll-behavior: smooth;
         }
 
         body {
-            background-color: transparent; /* Allows canvas behind to show */
+            background-color: transparent;
             color: var(--text-secondary);
             overflow-x: hidden;
             line-height: 1.6;
             min-height: 100vh;
             position: relative;
-            z-index: 1; /* Content sits above canvas */
+            z-index: 1;
         }
 
-        /* Canvas sits behind everything */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -96,7 +95,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            border-radius: 12px; /* Rectangular shape with slight soft corners */
+            border-radius: 12px;
             padding: 30px;
             box-shadow: var(--glass-shadow);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -138,7 +137,6 @@
         .nav-links a { font-weight: 500; font-size: 0.95rem; color: var(--text-secondary); }
         .nav-links a:hover { color: var(--accent-main); }
 
-        /* Theme Toggle Button */
         #theme-toggle {
             background: transparent;
             border: 1px solid var(--glass-border);
@@ -154,19 +152,19 @@
             color: white;
         }
 
-        /* --- 5. HERO SECTION (Modified) --- */
+        /* --- 5. HERO SECTION --- */
         section { padding: 100px 0; border-bottom: 1px solid var(--glass-border); }
 
         #home { display: flex; align-items: center; padding-top: 150px; min-height: 80vh; }
         .hero-content { display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap-reverse; gap: 50px; }
         
         .hero-text { flex: 1; min-width: 300px; }
-        /* Removed H1 Name Tag as requested */
         .hero-text h2 { font-size: 2.5rem; margin-bottom: 20px; line-height: 1.2; }
         .hero-text h3 { font-size: 1.5rem; color: var(--accent-glow); margin-bottom: 20px; }
         .hero-text p { font-size: 1.15rem; margin-bottom: 30px; max-width: 500px; }
 
-        .btn { display: inline-block; padding: 12px 30px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        /* BUTTONS: Changed border-radius to 50px for round shape */
+        .btn { display: inline-block; padding: 12px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-primary { background: var(--accent-main); color: white; border: none; }
         .btn-primary:hover { background: var(--accent-glow); transform: translateY(-2px); }
         .btn-outline { border: 2px solid var(--accent-main); color: var(--text-primary); margin-left: 10px; background: transparent; }
@@ -175,7 +173,7 @@
         .profile-container {
             position: relative;
             width: 300px; height: 300px;
-            border-radius: 50%; /* Circular photo */
+            border-radius: 50%;
             padding: 8px;
             background: linear-gradient(45deg, var(--accent-main), var(--accent-glow));
             box-shadow: 0 0 30px rgba(102,102,255,0.4);
@@ -187,12 +185,12 @@
         .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 50px; position: relative; }
         .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--accent-main); margin: 10px auto 0; }
 
-        /* Tabs */
+        /* Tabs: Changed border-radius to 30px for round shape */
         .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
         .tab-btn {
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             padding: 10px 20px; cursor: pointer; color: var(--text-secondary);
-            font-size: 1rem; border-radius: 6px;
+            font-size: 1rem; border-radius: 30px; /* Round tabs */
         }
         .tab-btn.active, .tab-btn:hover { background: var(--accent-main); color: white; border-color: var(--accent-main); }
         
@@ -210,9 +208,9 @@
         /* Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         
-        /* Banner Images for Projects */
+        /* Banner Images */
         .banner-box {
-            width: calc(100% + 60px); /* Stretch to edges of padding */
+            width: calc(100% + 60px);
             margin: -30px -30px 20px -30px;
             height: 200px;
             overflow: hidden;
@@ -467,7 +465,6 @@
         const icon = themeBtn.querySelector('i');
         const html = document.documentElement;
 
-        // Get CSS Variables for Canvas
         function getVar(name) {
             return getComputedStyle(html).getPropertyValue(name).trim();
         }
@@ -484,10 +481,9 @@
             html.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
             icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            updateColors(); // Refresh canvas colors immediately
+            updateColors();
         }
 
-        // Init Theme
         const saved = localStorage.getItem('theme') || 'dark';
         setTheme(saved);
 
@@ -522,10 +518,9 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1; // Bigger particles
-                this.speedX = Math.random() * 1.5 - 0.75; // Faster speed
+                this.size = Math.random() * 3 + 1; 
+                this.speedX = Math.random() * 1.5 - 0.75; 
                 this.speedY = Math.random() * 1.5 - 0.75;
-                // Store type instead of static color string
                 this.type = Math.random() > 0.5 ? 1 : 2;
             }
             update() {
@@ -537,7 +532,6 @@
                 if (this.y < 0) this.y = canvas.height;
             }
             draw() {
-                // Use dynamic variables based on current theme
                 ctx.fillStyle = this.type === 1 ? pColor1 : pColor2;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -547,7 +541,6 @@
 
         function initParticles() {
             particles = [];
-            // High count for visibility
             const count = window.innerWidth > 768 ? 80 : 40; 
             for (let i = 0; i < count; i++) {
                 particles.push(new Particle());
