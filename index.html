@@ -380,6 +380,19 @@ ul { list-style: none; }
 .figure { margin: 0; }
 .figure img { width: 100%; border-radius: 4px; background: #fff; }
 .figure figcaption { color: var(--muted); font-size: .88rem; margin-top: 8px; }
+/* Homepage poster fills the window on desktop */
+body { overflow-x: clip; }
+@media (min-width: 901px) {
+  #view-home { padding-top: 0; }
+  .beamstage { --pad: max(30px, calc((100vw - 1100px) / 2 + 24px)); width: 100vw; margin-left: calc(50% - 50vw); border: 0; border-bottom: 1px solid var(--rule); }
+  .bs-layer { padding: 22px var(--pad) 0; }
+  .bs-side { width: 240px; }
+  .bs-side.l { left: var(--pad); }
+  .bs-side.r { right: var(--pad); }
+  .bs-hint { left: var(--pad); }
+  .bs-photo { height: calc(100vh - 126px); height: calc(100svh - 126px); min-height: 480px; margin-top: 0; }
+  .bs-layer.dark { clip-path: polygon(calc(50% - 47px) 125px, calc(50% + 47px) 125px, calc(var(--bx) + 40vh) 100%, calc(var(--bx) - 40vh) 100%); }
+}
 .site-foot a { color: var(--muted); }
 .site-foot a:hover { color: var(--accent); }
 </style>
@@ -478,7 +491,7 @@ ul { list-style: none; }
   var cur = null, target = null;
   function frame(t) {
     var w = stage.clientWidth;
-    var goal = target !== null ? target : w / 2 + (still ? 0 : Math.sin(t / 2400) * w * 0.16);
+    var goal = target !== null ? target : w / 2 + (still ? 0 : Math.sin(t / 2400) * Math.min(w * 0.16, 240));
     if (cur === null) cur = goal;
     cur += (goal - cur) * (still ? 1 : 0.09);
     stage.style.setProperty("--bx", cur.toFixed(1) + "px");
