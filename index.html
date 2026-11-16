@@ -393,15 +393,6 @@ body { overflow-x: clip; }
   .bs-photo { height: calc(100vh - 126px); height: calc(100svh - 126px); min-height: 480px; margin-top: 0; }
   .bs-layer.dark { clip-path: polygon(calc(50% - 47px) 125px, calc(50% + 47px) 125px, calc(var(--bx) + 40vh) 100%, calc(var(--bx) - 40vh) 100%); }
 }
-/* Photo edges: fade the sides only above the floor, so the papers stay sharp */
-.bs-photo {
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(#000, #000);
-          mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(#000, #000);
-  -webkit-mask-size: 100% 79%, 100% 21.2%; mask-size: 100% 79%, 100% 21.2%;
-  -webkit-mask-position: top, bottom; mask-position: top, bottom;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-composite: source-over; mask-composite: add;
-}
 /* About me */
 #about-me { scroll-margin-top: 80px; }
 .about { display: grid; gap: 16px; max-width: 66ch; font-size: 1.15rem; }
