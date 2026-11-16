@@ -443,6 +443,7 @@ body { overflow-x: clip; }
 .article th, .article td { border: 1px solid var(--rule); padding: 8px 12px; text-align: left; }
 .article hr { border: 0; border-top: 1px solid var(--rule); margin: 2em 0; }
 .article-source { color: var(--muted); font-size: .92rem; }
+.blog-empty { color: var(--muted); padding: 10px 0 30px; }
 </style>
 </head>
 <body>
@@ -525,7 +526,7 @@ body { overflow-x: clip; }
     </div>
 
     <div class="band">
-      <div><h2>Working on something related?</h2><p>I'm open to research collaborations.</p></div>
+      <div><h2>Working on something related?</h2><p>I'm open to collaboration.</p></div>
       <a class="btn" href="#contact">Get in touch</a>
     </div>
   </section>
@@ -686,6 +687,13 @@ body { overflow-x: clip; }
   <section class="view" id="view-blog">
     <h1 class="page-title">Blog</h1>
     <p class="page-intro">I write most weeks at <a href="https://aiagentssimplified.substack.com/">AI Agents Simplified</a>. These are the pieces I'd point someone to first.</p>
+    <div class="filters" id="blog-filters" role="group" aria-label="Filter posts by category">
+      <button type="button" data-cat="all" aria-pressed="true">All</button>
+      <button type="button" data-cat="research-paper" aria-pressed="false">Research paper</button>
+      <button type="button" data-cat="personal-experience" aria-pressed="false">Personal experience</button>
+      <button type="button" data-cat="deep-dive" aria-pressed="false">Deep dive</button>
+      <button type="button" data-cat="technical-fundamentals" aria-pressed="false">Technical fundamentals</button>
+    </div>
     <div id="writing-list"></div>
   </section>
 
@@ -742,7 +750,7 @@ body { overflow-x: clip; }
   <!-- CONTACT -->
   <section class="view" id="view-contact">
     <h1 class="page-title">Contact</h1>
-    <p class="page-intro">I'm open to research collaborations. Email is the fastest way to reach me.</p>
+    <p class="page-intro">I'm open to collaboration. Email is the fastest way to reach me.</p>
 
     <div class="row">
       <div class="rail"><div class="label">Reach me</div></div>
@@ -815,21 +823,21 @@ body { overflow-x: clip; }
 
   var CDN = "https://substackcdn.com/image/fetch/";
   var POSTS = [
-    { id: "post-agent-fundamentals", group: "Fundamentals", tag: "Fundamentals", num: "1", short: "Agent fundamentals, part 1", bg: "#8f3a22",
+    { id: "post-agent-fundamentals", cat: "technical-fundamentals", tag: "Technical fundamentals", num: "1", short: "Agent fundamentals, part 1", bg: "#8f3a22",
       title: "Don't Learn AI Agents Without Learning These Fundamentals (Part 1)",
       date: "15 Oct 2026",
       url: "https://aiagentssimplified.substack.com/p/dont-learn-ai-agents-without-learning",
       img: CDN + "$s_!e3vb!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef7f91b2-9dea-460f-9564-93c7bec5beed_1672x941.png",
       blurb: "What's going on underneath when your AI assistant gets it wrong. Start here if agent tutorials keep assuming things you were never taught.",
       covers: ["Context windows, and why more text can mean worse answers", "Prompting for specific answers", "Embeddings, which find documents by meaning instead of keywords", "RAG, or answering from your own documents"] },
-    { id: "post-ai-engineer-guide", group: "Learning paths", tag: "Reading guide", num: "2", short: "How to become an AI engineer", bg: "#f0561d", fg: "#100e11",
+    { id: "post-ai-engineer-guide", cat: "deep-dive", tag: "Deep dive", num: "2", short: "How to become an AI engineer", bg: "#f0561d", fg: "#100e11",
       title: "How to Become an AI Engineer: The Complete Beginner's Guide",
       date: "28 Jul 2026",
       url: "https://aiagentssimplified.substack.com/p/how-to-become-an-ai-engineer-the",
       img: CDN + "$s_!XZZj!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep:g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb320dcb5-3322-47fb-b9d4-218c6d40f6da_1536x1024.jpeg",
       blurb: "A chapter-by-chapter reading guide to Chip Huyen's AI Engineering, for people who want to know what to read closely and what to skim.",
       covers: ["Who the book is for and who can skip it", "A fast track and a deeper route through the chapters", "Terms to know before you start", "A 60-minute project to test what you learned"] },
-    { id: "post-ai-engineering-from-scratch", group: "Learning paths", tag: "Learning path", num: "3", short: "AI engineering from scratch", bg: "#34432c",
+    { id: "post-ai-engineering-from-scratch", cat: "deep-dive", tag: "Deep dive", num: "3", short: "AI engineering from scratch", bg: "#34432c",
       title: "AI Engineering From Scratch",
       date: "9 Jun 2026",
       url: "https://aiagentssimplified.substack.com/p/ai-engineering-from-scratch",
@@ -862,12 +870,22 @@ body { overflow-x: clip; }
   });
 
   /* Blog: grouped list + detail pages */
-  var groups = [];
-  POSTS.forEach(function (p) { if (groups.indexOf(p.group) === -1) groups.push(p.group); });
-  document.getElementById("writing-list").innerHTML = groups.map(function (g) {
-    var items = POSTS.filter(function (p) { return p.group === g; });
-    return row(g, '<div class="card-list">' + items.map(function (p) { return card(p, "Read more"); }).join("") + '</div>');
-  }).join("");
+  var CATS = { "research-paper": "Research paper", "personal-experience": "Personal experience",
+               "deep-dive": "Deep dive", "technical-fundamentals": "Technical fundamentals" };
+  function renderBlog(cat) {
+    var items = POSTS.filter(function (p) { return cat === "all" || p.cat === cat; });
+    document.getElementById("writing-list").innerHTML = items.length
+      ? items.map(function (p) { return row(CATS[p.cat], card(p, "Read more")); }).join("")
+      : '<p class="blog-empty">No posts in this category yet.</p>';
+  }
+  renderBlog("all");
+  var blogButtons = document.querySelectorAll("#blog-filters button");
+  blogButtons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      blogButtons.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      renderBlog(b.getAttribute("data-cat"));
+    });
+  });
   document.getElementById("home-writing").innerHTML = POSTS.slice(0, 3).map(function (p) { return card(p, "Read more"); }).join("");
   POSTS.forEach(function (p) {
     p.meta = p.date + " / AI Agents Simplified";
@@ -919,7 +937,7 @@ body { overflow-x: clip; }
   show();
 
   /* Journey filters */
-  var buttons = document.querySelectorAll(".filters button");
+  var buttons = document.querySelectorAll("#view-journey .filters button");
   buttons.forEach(function (b) {
     b.addEventListener("click", function () {
       var f = b.getAttribute("data-filter");
