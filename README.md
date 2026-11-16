@@ -11,7 +11,7 @@ Personal website of Hana Esfandiar, hosted on GitHub Pages.
 
 ## Blog posts
 
-The Blog pages show the full text of each post. `scripts/import_posts.py` runs every time the site is published, fetches each post from Substack and saves it to `posts/<slug>.html`. If a post cannot be fetched, its page shows a link to Substack instead.
+The Blog pages show the full text of each post. `scripts/import_posts.py` runs every time the site is published, fetches each post from Substack and saves it to `posts/<slug>.html`. The workflow commits those files to the repository, so if Substack refuses a later request the last saved copy is used.
 
 To add a post, add its slug to `SLUGS` in `scripts/import_posts.py` and add an entry to `POSTS` in `index.html`.
 

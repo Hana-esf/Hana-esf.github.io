@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -33,6 +33,16 @@ jobs:
         uses: actions/checkout@v4
       - name: Import blog posts from Substack
         run: python3 scripts/import_posts.py
+      - name: Save imported posts to the repository
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -n "$(git status --porcelain posts)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add posts
+            git commit -m "Update imported blog posts"
+            git push || echo "Could not save the posts this time; the site still deploys."
+          fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

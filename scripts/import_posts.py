@@ -4,12 +4,13 @@
 Runs in the GitHub Pages workflow before the site is published. For each slug
 below it asks Substack for the post, keeps only plain article markup, and
 writes the result where the blog detail page looks for it. If a post cannot
-be fetched, the existing file (if any) is left alone and the page falls back
-to a link to Substack, so a failed import never breaks the deploy.
+be fetched, the copy already saved in the repository is kept. If there is no
+saved copy, the page falls back to a link to Substack. A failed import never
+breaks the deploy.
 
 To add a post: add its slug here and add an entry to POSTS in index.html.
 """
-import json, os, re, sys, urllib.request
+import json, os, re, sys, time, urllib.request
 from html.parser import HTMLParser
 
 SUBSTACK = "https://aiagentssimplified.substack.com"
@@ -109,12 +110,19 @@ def clean(html):
     return text.strip()
 
 
-def fetch(slug):
+def fetch(slug, attempts=3):
+    """Ask Substack for one post. Substack sometimes answers 403 to GitHub's servers, so try a few times."""
     req = urllib.request.Request("%s/api/v1/posts/%s" % (SUBSTACK, slug),
                                  headers={"User-Agent": "Mozilla/5.0 (site importer for hana-esf.github.io)",
                                           "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8"))
+    for n in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except Exception:
+            if n == attempts - 1:
+                raise
+            time.sleep(5 * (n + 1))
 
 
 def main():
